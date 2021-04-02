@@ -1,7 +1,7 @@
 class Rental_Income:
     """Initialize Attributes for class Rental_Income"""
-    def __init__(self, expTax, expIns, expUtil, expHoa, expLawn, expVacant, expRepairs, expCapex, expPropMgt, expMortgage, propInc, propExp, unitInc):
-        # self.propId = propId
+    def __init__(self, propId, expTax, expIns, expUtil, expHoa, expLawn, expVacant, expRepairs, expCapex, expPropMgt, expMortgage, propInc, propExp, unitInc):
+        self.propId = propId
         # self.numUnits = numUnits
         # self.estRentIncome = estRentIncome
         # self.unitId = unitId
@@ -35,16 +35,17 @@ class Rental_Income:
 
         # Property name/address to identify which prop reviewed
         prop_id = input("What is the property name or address number? ")
+        self.propId = prop_id
         
         # Set value for prop_id in propInc dict to 0 in order to += with rental income values later
-        self.propInc[prop_id] = 0
+        self.propInc[self.propId] = 0
         print(self.propInc)
 
 
         # Get user input to determine number of units in property (must be a number)
         while True:
             try:
-                num_units = int(input("How many units are in the property? Please enter a number value. "))
+                num_units = int(input("How many units are in the property? Please enter a number value: "))
                 break
             except ValueError:
                 print("The input must be a number.")
@@ -52,7 +53,10 @@ class Rental_Income:
 
         # If property has 1 unit, ask monthly est_rent_ income for the property
         if num_units == 1:
-            est_rent_income = int(input(f"What is the estimated monthly rental income for the property? Please enter a number value. "))
+            est_rent_inc = int(input(f"What is the estimated monthly rental income for the property? Please enter a number value: "))
+            
+            self.propInc[self.propId] += est_rent_inc
+            print(self.propInc)
 
         # If prop has more than 1 unit, ask monthly est_rent_income for each unit
         if num_units > 1:
@@ -62,15 +66,15 @@ class Rental_Income:
 
             # Ask user to identify the unit and its monthly rental income
             for unit in num_units:
-                unit_id = input("Enter the unit name or number. ")
+                unit_id = input("Enter the unit name or number: ")
 
-                est_rent_income = int(input(f"What is the monthly rental income for unit {unit_id.title()}? Please enter a number value. "))
+                est_rent_income = int(input(f"What is the monthly rental income for unit {unit_id.title()}? Please enter a number value: "))
 
                 # Not sure yet if I need the unitInc dictionary
                 self.unitInc[unit_id] = est_rent_income
                 
                 # Add the est_rent_income for each unit to the existing value in the propInc dict (summing ongoing to get a total est income)
-                self.propInc[prop_id] += est_rent_income
+                self.propInc[self.PropId] += est_rent_income
 
                 # Store unit_id to unitInc dict key and est_rent_income to unitInc dict value
                 print(self.unitInc)
@@ -81,14 +85,22 @@ class Rental_Income:
         
         # Add additional income amount to value in propInc dict.
         if addl_inc.lower() == 'yes':
-            other_inc = int(input("Please enter the estimated amount of additional monthly income expected. "))
+            other_inc = int(input("Please enter the estimated amount of additional monthly income expected: "))
           
-            self.propInc[prop_id] += other_inc   
+            self.propInc[self.propId] += other_inc   
             print(self.propInc)
 
 
 
-def monthlyExp(self):
+    def monthlyExp(self):
+        # Set value for prop_id in propInc dict to 0 in order to += with rental income values later
+        self.propExp[self.propId] = 0
+        print(self.propExp)
+
+        tax = int(input("Please enter the monthly taxes for the property: "))
+        self.expTax = tax
+
+        self.propExp[self.propId] += self.expTax
 
 
 
@@ -96,7 +108,8 @@ def monthlyExp(self):
 
 
 
-calcRoi = Rental_Income(1,1,1,1,1,1,1,1,1,1,1,1,1)
+
+calcRoi = Rental_Income(1,1,1,1,1,1,1,1,1,1,1,1,1,1)
 
 def run():
     while True:
@@ -109,6 +122,7 @@ def run():
 
         elif get_started.lower() == 'yes':
             calcRoi.monthlyInc()
+            calcRoi.monthlyExp()
 
 run()
 
