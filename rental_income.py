@@ -82,12 +82,15 @@ class Roi_Calc:
 
             # Ask user to identify the unit and its monthly rental income
             for unit in num_units:
-                unit_id = input("\nEnter the unit name or number: ")
 
-                est_rent_income = int(input(f"\nWhat is the monthly rental income for unit '{unit_id.title()}'? Please enter a number value: "))
+                # If allowing user to identify individual units, need to prevent appending dups to dictionary
+                # unit_id = input("\nEnter the unit name or number: ")
+
+                # For each unit in num_units, ask monthly rental income
+                est_rent_income = int(input(f"\nWhat is the monthly rental income for unit {unit}? Please enter a number value: "))
 
                 # Add keys, values for each unit to unitInc dictionary
-                self.unitInc[unit_id] = est_rent_income
+                self.unitInc[unit] = est_rent_income
                 
                 # Add the est_rent_income for each unit to the existing value in the propInc dict (summing ongoing to get a total est income)
                 self.propInc[self.propId] += est_rent_income
