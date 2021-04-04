@@ -1,11 +1,8 @@
 class Roi_Calc:
     """Initialize Attributes for class Roi_Calc"""
-    def __init__(self, propId, estRentIncome, expenseTax, expenseInsurance, expenseUtilities, expenseHoa, expenseLawnCare, expenseVacancy, expenseRepairs, expenseCapExpenditures, expensePropertyMgmt, expenseMortgage, downPayment, closingCosts, rehabBudget, otherMiscCosts, purchasePrice, propInc, propExp, unitInc, upFrontInvestment):
+    def __init__(self, propId, estRentIncome, expenseTax, expenseInsurance, expenseUtilities, expenseHoa, expenseLawnCare, expenseVacancy, expenseRepairs, expenseCapExpenditures, expensePropertyMgmt, expenseMortgage, downPayment, closingCosts, rehabBudget, otherMiscCosts, purchasePrice, calcMonthlyCashFlow, calcAnnualCashFlow, annualCashFlow, propInc, propExp, unitInc, upFrontInvestment, calcRoi, percentageRoi):
         self.propId = propId
         self.estRentIncome = estRentIncome
-        # self.numUnits = numUnits
-        # self.unitId = unitId
-        # self.otherIncome = otherIncome
         self.expenseTax = expenseTax
         self.expenseInsurance = expenseInsurance
         self.expenseUtilities = expenseUtilities
@@ -21,10 +18,15 @@ class Roi_Calc:
         self.rehabBudget = rehabBudget
         self.otherMiscCosts = otherMiscCosts
         self.purchasePrice = purchasePrice
+        self.calcMonthlyCashFlow = {}
+        self.calcAnnualCashFlow = calcAnnualCashFlow
+        self.annualCashFlow = {}
         self.propInc = {}
         self.propExp = {}
         self.unitInc = {}
         self.upFrontInvestment = {}
+        self.calcRoi = calcRoi
+        self.percentage_Roi = percentageRoi
 
 
 
@@ -37,6 +39,7 @@ class Roi_Calc:
         # Not sure yet if I want to include this one
         # num_reviewing = input("How many properties are you reviewing?")
         # or after finishing one property, ask would you like to calculate ROI for another property? y/n/exit program
+
         print("\nWe will start by calculating the estimated income you expect to receive from the rental property.\n")
 
         # Property name/address to identify which prop reviewed
@@ -79,7 +82,7 @@ class Roi_Calc:
 
                 est_rent_income = int(input(f"What is the monthly rental income for unit {unit_id.title()}? Please enter a number value: "))
 
-                # Not sure yet if I need the unitInc dictionary
+                # Add keys, values for each unit to unitInc dictionary
                 self.unitInc[unit_id] = est_rent_income
                 
                 # Add the est_rent_income for each unit to the existing value in the propInc dict (summing ongoing to get a total est income)
@@ -98,13 +101,15 @@ class Roi_Calc:
             est_additional_income = int(input("Please enter the estimated amount of additional monthly income expected: "))
           
             self.propInc[self.propId] += est_additional_income
-            print(self.propInc)
+
         
         # any value other yes, increment by 0. Incrementing not working properly without this step. 
         else: 
             self.propInc[self.propId] += 0
-            print(self.propInc)
-
+        
+        
+        # Display a summary of total estimated income
+        print(f"\nBased on your inputs, the total estimated income for property {self.propId.title()} is: $",format(self.propInc[self.propId],",.2f"))
 
 
     def calculateMonthlyExp(self):
@@ -112,64 +117,70 @@ class Roi_Calc:
             monthlyExp method/function will obtain user input to calculate monthly expenses associated with rental property
         """
 
-        print("Next, we will calculate estimated expenses associated with the rental property.\n")
+        print("\nNext, we will calculate estimated expenses associated with the rental property.\n")
 
         # Set value for prop_id in propInc dict to 0 in order to += with rental income values later
         self.propExp[self.propId] = 0
-        print(f"Property Expenses Dictionary: {self.propExp}")
+        # print(f"Property Expenses Dictionary: {self.propExp}\n")
 
 
-        tax_budget = int(input("Please enter the estimated monthly taxes for the property. Enter 0 if not applicable or don't know: "))
+        # Ask user a series of inputs to gather expense amounts
+        # Increment each response to values in self.propExp dictionary based on self.propId key
+        tax_budget = int(input("\nPlease enter the estimated monthly taxes for the property. Enter 0 if not applicable or don't know: "))
         self.expenseTax = tax_budget
         self.propExp[self.propId] += self.expenseTax
 
 
-        utilities_budget = int(input("Please enter the estimated monthly utility costs for the property. Enter 0 if not applicable or don't know: "))
+        utilities_budget = int(input("\nPlease enter the estimated monthly utility costs for the property. Enter 0 if not applicable or don't know: "))
         self.expenseUtilities = utilities_budget
         self.propExp[self.propId] += self.expenseUtilities
 
 
-        insurance_budget = int(input("Please enter the estimated monthly insurance costs for the property. Enter 0 if not applicable or don't know: "))
+        insurance_budget = int(input("\nPlease enter the estimated monthly insurance costs for the property. Enter 0 if not applicable or don't know: "))
         self.expenseInsurance = insurance_budget
         self.propExp[self.propId] += self.expenseInsurance
 
 
-        hoa_budget = int(input("Please enter the estimated monthly HOA fees for the property. Enter 0 if not applicable or don't know: "))
+        hoa_budget = int(input("\nPlease enter the estimated monthly HOA fees for the property. Enter 0 if not applicable or don't know: "))
         self.expenseHoa = hoa_budget
         self.propExp[self.propId] += self.expenseHoa
 
 
-        lawn_care_budget = int(input("Please enter the estimated monthly budget for lawn care/snow removal for the property. Enter 0 if not applicable or don't know: "))
+        lawn_care_budget = int(input("\nPlease enter the estimated monthly budget for lawn care/snow removal for the property. Enter 0 if not applicable or don't know: "))
         self.expenseLawnCare = lawn_care_budget
         self.propExp[self.propId] += self.expenseLawnCare
 
 
-        vacancy_budget = int(input("Please enter your estimated monthly budget for vacancies. Enter 0 if not applicable or don't know: "))
+        vacancy_budget = int(input("\nPlease enter your estimated monthly budget for vacancies. Enter 0 if not applicable or don't know: "))
         self.expenseVacancy = vacancy_budget
-        self.propExp[self.propId] += self.expenseLawnCare
+        self.propExp[self.propId] += self.expenseVacancy
 
     
-        repairs_budget = int(input("Please enter your estimated monthly budget for repairs (i.e. small damages to property, such as holes in a wall, minor flooring repairs, paint touch-up, etc.). Enter 0 if not applicable or don't know: "))
+        repairs_budget = int(input("\nPlease enter your estimated monthly budget for repairs (i.e. small damages to property, such as holes in a wall, minor flooring repairs, paint touch-up, etc.). Enter 0 if not applicable or don't know: "))
         self.expenseRepairs = repairs_budget
         self.propExp[self.propId] += self.expenseRepairs
 
 
-        cap_expenditure_budget = int(input("Please enter your estimated monthly budget for capital expenditures (i.e. high-cost items, such as a new roof, new appliances, new flooring, etc.). Enter 0 if not applicable or don't know: "))
+        cap_expenditure_budget = int(input("\nPlease enter your estimated monthly budget for capital expenditures (i.e. high-cost items, such as a new roof, new appliances, new flooring, etc.). Enter 0 if not applicable or don't know: "))
         self.expenseCapExpenditures = cap_expenditure_budget
         self.propExp[self.propId] += self.expenseCapExpenditures
         
 
-        property_mgmt_budget = int(input("Please enter your estimated monthly cost for property management. Enter 0 if not applicable or don't know: "))
+        property_mgmt_budget = int(input("\nPlease enter your estimated monthly cost for property management. Enter 0 if not applicable or don't know: "))
         self.expensePropertyMgmt = property_mgmt_budget
-        self.propExp[self.propId] += self.expenseCapExpenditures
+        self.propExp[self.propId] += self.expensePropertyMgmt
         
 
-        mortgage_budget = int(input("Please enter your estimated monthly mortgage amount. Enter 0 if not applicable or don't know: "))
+        mortgage_budget = int(input("\nPlease enter your estimated monthly mortgage amount. Enter 0 if not applicable or don't know: "))
         self.expenseMortgage = mortgage_budget
         self.propExp[self.propId] += self.expenseMortgage
 
+        
+        # Print a summary of expenses
+        # print(f"Property Expenses Dictionary: {self.propExp}")
 
-        print(f"Property Expenses Dictionary: {self.propExp}")
+        # Display a summary of total estimated expenses
+        print(f"\nBased on your inputs, the total estimated expense amount for property {self.propId.title()} is: $",format(self.propExp[self.propId],",.2f"))
 
     
     def calculateCashFlow(self):
@@ -178,71 +189,101 @@ class Roi_Calc:
             will calculate cash flow using values from
             propInc and propExp dictionaries
         """
-        C = {x: self.propInc[x] - self.propExp[x] for x in self.propInc if x in self.propExp}
 
-        # for prop in self.propInc(key):
-        #     self.propInc(key)
-
-        #     print(f"Based on the information you provided, your monthly cash flow for {key} is estimated to be: {value}")
+        # Set the self.calcMonthlyCashFlow empty dictionary to store the value of the monthly cash flow calculation
+        self.calcMonthlyCashFlow = {x: self.propInc[x] - self.propExp[x] for x in self.propInc if x in self.propExp}
 
 
+        # Set annualCashFlow dictionary value to self.propId and its value to 0 in order to increment based on user inputs
+        self.annualCashFlow[self.propId] = 0
+        # print(f"Annual Cash Flow Dictionary: {self.annualCashFlow}\n")
+    
+        # Loop through each property in the self.propInc dictionary
         for prop in self.propInc: 
-            # print(f"\nWe calculate Cash Flow as projected income less projected expenses.\nBased on the information you provided, your estimated monthly cash flow for this property is: {C[self.propId]}\n")
+            
+            # Calculate annual cash flow based on self.calcMonthlyCashFlow *12
+            # Add value to self.annual CashFlow dictionary
+            self.calcAnnualCashFlow = self.calcMonthlyCashFlow[self.propId]*12
+            self.annualCashFlow[self.propId] += self.calcAnnualCashFlow
 
-            print(f"\nWe calculate Cash Flow as projected income less projected expenses.\nBased on the information you provided, your estimated monthly cash flow for {self.propId.title()} is: $",format(C[self.propId],",.2f"))
+            
+            # Display monthy and annual cash flow amounts
+            print(f"\nWe calculate Cash Flow as projected income less projected expenses.Based on the information you provided, your estimated monthly cash flow for property {self.propId.title()} is: $",format(self.calcMonthlyCashFlow[self.propId],",.2f"))
+
+
+            print(f"\nThe projected annual cash flow is: $",format(self.annualCashFlow[self.propId],",.2f"))
+
+
+            # print(self.calcMonthlyCashFlow.items())
+            # print(self.annualCashFlow.items())
 
 
 
     def calculateInitialInvestment(self):
-        print("\nFinally, we are going to calculate your initial investment (the amount you are putting in up-front for the purchase of the rental property). We will use this amount to calculate your ROI.")
+        print("\nFinally, we are going to calculate your initial investment (the amount you are putting in up-front for the purchase of the rental property).")
 
+        # Set upFrontInvestment dictionary value to 0 in order to increment based on user inputs
         self.upFrontInvestment[self.propId] = 0
 
-        purchase_price = int(input("What is the purchase price of the property? Enter a numerical value: "))
-        self.purchasePrice = purchase_price
-        self.upFrontInvestment[self.propId] += self.purchasePrice
+        # Ask user series of inputs to determine up-front investment amount
+        purchase_price = int(input("\nWhat is the purchase price of the property? Enter a numerical value: "))
+        # self.purchasePrice = purchase_price
+        # self.upFrontInvestment[self.propId] += self.purchasePrice
 
 
-        closing_costs = int(input("Please enter your estimated closing costs. Enter 0 if not applicable or don't know. Or enter an estimated amount of 3-5% of the purchase price: "))
+        closing_costs = int(input("\nPlease enter your estimated closing costs. Enter 0 if not applicable or don't know. Or enter an estimated amount of 3-5% of the purchase price: "))
         self.closingCosts = closing_costs
         self.upFrontInvestment[self.propId] += self.closingCosts
 
 
-        down_payment = int(input("Please enter your down payment amount. Enter 0 if not applicable or don't know: "))
+        down_payment = int(input("\nPlease enter your down payment amount. Enter 0 if not applicable or don't know: "))
         self.downPayment = down_payment
         self.upFrontInvestment[self.propId] += self.downPayment
 
 
-        rehab_budget = int(input("Please enter your rehab budget (i.e. painting the outside of the property, other cosmetic changes, or bigger changes such as fixing electrical/plumbing/roofing issues). Enter 0 if not applicable or don't know: "))
+        rehab_budget = int(input("\nPlease enter your rehab budget (i.e. painting the outside of the property, other cosmetic changes, or bigger changes such as fixing electrical/plumbing/roofing issues). Enter 0 if not applicable or don't know: "))
         self.rehabBudget = rehab_budget
         self.upFrontInvestment[self.propId] += self.rehabBudget
 
 
-
-        other_misc_costs = int(input("Please enter the total amount of any other up-front investment costs you anticipate. Enter 0 if not applicable or don't know: "))
+        other_misc_costs = int(input("\nPlease enter the total amount of any other up-front investment costs you anticipate. Enter 0 if not applicable or don't know: "))
         self.otherMiscCosts = other_misc_costs
         self.upFrontInvestment[self.propId] += self.otherMiscCosts
 
-        # self.downPayment = down_payment
-        # if self.downPayment == 'calc':
-        #     down_pmt_calced = self.purchasePrice * .015
-        #     print(f"Your estimated down payment is {down_pmt_calced}.")
-            # self.upFrontInvestment[self.propId] += down_pmt_calced
 
-        # else:
-        #     self.upFrontInvestment[self.propInc] += self.downPayment
-
-
+        print(f"Based on your input, the total up-front investment cost is: {self.upFrontInvestment}\n")
 
 
     def calculateRoi(self):
-        for prop in self.propInc: 
-            print(f"\nWe calculate Cash Flow as projected income less projected expenses.\nBased on the information you provided, your estimated monthly cash flow for this property is: {C[self.propId]}")
+        """
+            calculateRoi method/function
+            calculates annual ROI by:
+            annual cash flow divided by total investment
+        """
+
+        # Caculation for annual ROI. Annual cash flow/total investment
+        self.calcRoi = (self.annualCashFlow[self.propId] / self.upFrontInvestment[self.propId])
+
+        # Change self.calcRoi from decimal display to percentage
+        self.percentageRoi = "{:.2%}".format(self.calcRoi)
+
+        # Display ROI result and opinion based on greater than 8% == good
+        if self.calcRoi < .08:
+         
+            print(f"\nWe calculate Return on Investment (ROI) as the projected annual cash flow divided by total investment. Based on the information you provided, your estimated annual ROI for property {self.propId.title()} is: {self.percentageRoi}")
+
+            print(f"\nWe consider anything over 8% to be a good return on investment. Based on your inputs, we consider property {self.propId.title()} a poor return on investment.")
+
+        else:
+    
+            print(f"\nWe calculate Return on Investment (ROI) as the projected annual cash flow divided by total investment. Based on the information you provided, your estimated annual ROI for property {self.propId.title()} is: {self.percentageRoi}")
+
+            print(f"\nWe consider anything over 8% to be a good return on investment. Based on your inputs, we consider property {self.propId.title()} a good return on investment!")
 
 
 
 
-rentalProp = Roi_Calc(1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1)
+rentalProp = Roi_Calc(1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1)
 
 def run():
     while True:
