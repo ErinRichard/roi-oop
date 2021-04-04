@@ -43,19 +43,21 @@ class Roi_Calc:
         print("\nWe will start by calculating the estimated income you expect to receive from the rental property.\n")
 
         # Property name/address to identify which prop reviewed
-        property_id = input("What is the property name or address number? ")
+        property_id = input("\nWhat is the property name or address number? ")
         self.propId = property_id
         
 
         # Set value for prop_id in propInc dict to 0 in order to += with rental income values later
         self.propInc[self.propId] = 0
-        print(self.propInc)
+        
+        # ER use to print for confirmation
+        # print(self.propInc)
 
 
         # Get user input to determine number of units in property (must be a number)
         while True:
             try:
-                num_units = int(input("How many units are in the property? Please enter a number value: "))
+                num_units = int(input("\nHow many units are in the property? Please enter a number value: "))
                 break
             except ValueError:
                 print("The input must be a number.")
@@ -63,11 +65,13 @@ class Roi_Calc:
 
         # If property has 1 unit, ask monthly est_rent_ income for the property
         if num_units == 1:
-            est_rent_income = int(input(f"What is the estimated monthly rental income for the property? Please enter a number value: "))
+            est_rent_income = int(input(f"\nWhat is the estimated monthly rental income for the property? Please enter a number value: "))
 
             # increment the dictionary value by est_rent_income            
             self.propInc[self.propId] += est_rent_income
-            print(self.propInc)
+            
+            # ER use to print for confirmation
+            # print(self.propInc)
 
 
         # If prop has more than 1 unit, ask monthly est_rent_income for each unit
@@ -78,9 +82,9 @@ class Roi_Calc:
 
             # Ask user to identify the unit and its monthly rental income
             for unit in num_units:
-                unit_id = input("Enter the unit name or number: ")
+                unit_id = input("\nEnter the unit name or number: ")
 
-                est_rent_income = int(input(f"What is the monthly rental income for unit {unit_id.title()}? Please enter a number value: "))
+                est_rent_income = int(input(f"\nWhat is the monthly rental income for unit '{unit_id.title()}'? Please enter a number value: "))
 
                 # Add keys, values for each unit to unitInc dictionary
                 self.unitInc[unit_id] = est_rent_income
@@ -88,17 +92,17 @@ class Roi_Calc:
                 # Add the est_rent_income for each unit to the existing value in the propInc dict (summing ongoing to get a total est income)
                 self.propInc[self.propId] += est_rent_income
 
-                # Store unit_id to unitInc dict key and est_rent_income to unitInc dict value
-                print(self.unitInc)
-                print(self.propInc)
+                # ER use to print for confirmation
+                # print(self.unitInc)
+                # print(self.propInc)
 
 
         # Ask about possible additional income for the property
-        additional_income = input("Do you expect additional income from the property (such as laundry, storage, or other miscellaneous income)? Yes or No: ")
+        additional_income = input("\nDo you expect additional income from the property (such as laundry, storage, or other miscellaneous income)? Yes or No: ")
         
         # Add additional income amount to value in propInc dict.
         if additional_income.lower() == 'yes':
-            est_additional_income = int(input("Please enter the estimated amount of additional monthly income expected: "))
+            est_additional_income = int(input("\nPlease enter the estimated amount of additional monthly income expected: "))
           
             self.propInc[self.propId] += est_additional_income
 
@@ -109,7 +113,7 @@ class Roi_Calc:
         
         
         # Display a summary of total estimated income
-        print(f"\nBased on your inputs, the total estimated income for property {self.propId.title()} is: $",format(self.propInc[self.propId],",.2f"))
+        print(f"\nBased on your inputs, the total estimated income for property '{self.propId.title()}' is: $",format(self.propInc[self.propId],",.2f"))
 
 
     def calculateMonthlyExp(self):
@@ -180,7 +184,7 @@ class Roi_Calc:
         # print(f"Property Expenses Dictionary: {self.propExp}")
 
         # Display a summary of total estimated expenses
-        print(f"\nBased on your inputs, the total estimated expense amount for property {self.propId.title()} is: $",format(self.propExp[self.propId],",.2f"))
+        print(f"\nBased on your inputs, the total estimated expense amount for property '{self.propId.title()}' is: $",format(self.propExp[self.propId],",.2f"))
 
     
     def calculateCashFlow(self):
@@ -208,12 +212,12 @@ class Roi_Calc:
 
             
             # Display monthy and annual cash flow amounts
-            print(f"\nWe calculate Cash Flow as projected income less projected expenses.Based on the information you provided, your estimated monthly cash flow for property {self.propId.title()} is: $",format(self.calcMonthlyCashFlow[self.propId],",.2f"))
+            print(f"\nWe calculate Cash Flow as projected income less projected expenses. Based on the information you provided, your estimated monthly cash flow for property '{self.propId.title()}' is: $",format(self.calcMonthlyCashFlow[self.propId],",.2f"))
 
 
             print(f"\nThe projected annual cash flow is: $",format(self.annualCashFlow[self.propId],",.2f"))
 
-
+            # ER use to print for confirmation
             # print(self.calcMonthlyCashFlow.items())
             # print(self.annualCashFlow.items())
 
@@ -251,7 +255,7 @@ class Roi_Calc:
         self.upFrontInvestment[self.propId] += self.otherMiscCosts
 
 
-        print(f"Based on your input, the total up-front investment cost is: {self.upFrontInvestment}\n")
+        print(f"\nBased on your input, the total up-front investment cost is: $",format(self.upFrontInvestment[self.propId],".2f"))
 
 
     def calculateRoi(self):
@@ -270,15 +274,15 @@ class Roi_Calc:
         # Display ROI result and opinion based on greater than 8% == good
         if self.calcRoi < .08:
          
-            print(f"\nWe calculate Return on Investment (ROI) as the projected annual cash flow divided by total investment. Based on the information you provided, your estimated annual ROI for property {self.propId.title()} is: {self.percentageRoi}")
+            print(f"\nWe calculate Return on Investment (ROI) as the projected annual cash flow divided by total investment. Based on the information you provided, your estimated annual ROI for property '{self.propId.title()}' is: {self.percentageRoi}")
 
-            print(f"\nWe consider anything over 8% to be a good return on investment. Based on your inputs, we consider property {self.propId.title()} a poor return on investment.")
+            print(f"\nWe consider anything over 8% to be a good return on investment. Based on your inputs, we consider property '{self.propId.title()}' a poor return on investment.\n")
 
         else:
     
-            print(f"\nWe calculate Return on Investment (ROI) as the projected annual cash flow divided by total investment. Based on the information you provided, your estimated annual ROI for property {self.propId.title()} is: {self.percentageRoi}")
+            print(f"\nWe calculate Return on Investment (ROI) as the projected annual cash flow divided by total investment. Based on the information you provided, your estimated annual ROI for property '{self.propId.title()}' is: {self.percentageRoi}")
 
-            print(f"\nWe consider anything over 8% to be a good return on investment. Based on your inputs, we consider property {self.propId.title()} a good return on investment!")
+            print(f"\nWe consider anything over 8% to be a good return on investment. Based on your inputs, we consider property '{self.propId.title()}' a good return on investment!\n")
 
 
 
