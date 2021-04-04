@@ -304,6 +304,8 @@ def run():
             rentalProp.calculateInitialInvestment()
             rentalProp.calculateCashFlow()
             rentalProp.calculateRoi()
+            print("Thank you for using our ROI rental property calculator!")
+            break
 
 run()
 
